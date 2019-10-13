@@ -1,0 +1,87 @@
+*{
+    margin: 5px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+}
+
+h1{
+    border-bottom: 1px solid #999;
+    text-align: center;
+    font-size: 25px;
+    margin: 10px;
+}
+
+.info{
+    border-bottom: 1px solid #999;
+    font-size: 20px;
+    margin: 12px;
+}
+
+.dados input{
+    height: 40px;
+    width: 40px;
+}
+
+.TipoBusca input{
+    height: 20px;
+    width: 20px;
+
+}
+
+.legendas{
+    /* border-left: 1px solid #000; */
+    display: block;
+}
+
+.legenda{
+    display: inline-flex;
+}
+
+.cor{
+    height: 20px;
+    width: 20px;
+    border: 1px solid #000;
+    /* background: chocolate; */
+}
+
+.solidoPlano{
+    background: rgba(0, 0, 0, .3);
+}
+
+.rochoso{
+    background: rgba(0, 0, 0, .6);
+}
+
+.arenoso{
+    background: rgb(235, 168, 24);
+}
+
+.pantano{
+    background: rgba(27, 114, 5, 1);
+}
+
+table{
+    border-collapse: collapse;
+    border: 1px solid #000;
+    margin: auto;
+}
+
+td{
+    width: 50px;
+    height: 50px;
+    border: 1px solid #000;
+    text-align: center;
+    vertical-align: center;
+    font-family: monospace;
+    font-size: 18px;
+    position: relative;
+}
+
+.indiceTabuleiro{
+    font-size: 10px;
+    display: inline-block;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    color: #999;
+}
