@@ -1,4 +1,5 @@
 const tabuleiroArrayPixel = []
+const arrayCaminho = []
 /*
     custoTerreno    => init
     corTerreno      => string
@@ -6,11 +7,12 @@ const tabuleiroArrayPixel = []
     fim             => boolean
     powerUpIcon     => string
     powerUpValue    => int
+    heuristica      => int
 
 */
 
-const tabuleiroLinha = document.getElementById('ordemLinhas').value
-const tabuleiroColuna = document.getElementById('ordemColunas').value
+const rowTabuleiro = document.getElementById('ordemLinhas').value
+const columnTabuleiro = document.getElementById('ordemColunas').value
 
 const posicaoLinhaInicio = document.getElementById('posicaoInicioLinhas').value
 const posicaoColunaInicio = document.getElementById('posicaoInicioColunas').value
@@ -27,41 +29,50 @@ const ArrayLegendaColor =  [
 
 const ArrayPowerUps = [
     {"icon": '', "value": 0},                                      //Sem nada
-    {"icon": '<i class="fas fa-female"></i>', "value": -5},         //Com Prejuizo
-    {"icon": '<i class="fas fa-book-reader"></i>', "value": 5}     //COm lucro
+    {"icon": '<i class="fas fa-female"></i>', "value": 5},         //Com Prejuizo
+    {"icon": '<i class="fas fa-book-reader"></i>', "value": -5}     //COm lucro
 ]
 
 function star(){
-    if (verificacaoDados()) {
+    if (!verificacaoDados()) {
         alert(`Dados Iválidos!!\n
-        Inicio L: ${posicaoLinhaInicio} \n
+        Inicio L: ${posicaoLinhaInicio}
         Inicio C: ${posicaoColunaInicio} \n
-        Objetivo L: ${posicaoLinhaObjetivo} \n
+        Objetivo L: ${posicaoLinhaObjetivo}
         Objetivo C: ${posicaoColunaObjetivo} \n
-        Objetivo L: ${posicaoLinhaObjetivo} \n
-        Tabuleiro L: ${tabuleiroLinha} \n
-        Tabuleiro C: ${tabuleiroColuna}
+        Tabuleiro L: ${rowTabuleiro}
+        Tabuleiro C: ${columnTabuleiro}
         `)
     } else {
         criarEstrutura()
         console.log(JSON.parse(JSON.stringify(tabuleiroArrayPixel)));
         renderTabuleiro()
+
+        busca()
+
+        console.log(JSON.parse(JSON.stringify(arrayCaminho)))
     }
 }
 
 function verificacaoDados(){
     // Tabueiro
-    if((tabuleiroColuna <= 0) || (tabuleiroLinha <= 0)){
+    if((columnTabuleiro <= 0) || (rowTabuleiro <= 0)){
+        // alert(`IF 1`)
         return false
     }else if((posicaoColunaInicio <= 0) || (posicaoLinhaInicio <= 0)){
+        // alert(`IF 2`)
         return false
-    }else if((posicaoColunaInicio >= tabuleiroColuna) || (posicaoLinhaInicio >= tabuleiroLinha)){
+    }else if((posicaoColunaInicio-1 >= columnTabuleiro) || (posicaoLinhaInicio-1 >= rowTabuleiro)){
+        // alert(`IF 3`)
         return false
     }else if((posicaoColunaObjetivo <= 0) || (posicaoLinhaObjetivo <= 0)){
+        // alert(`IF 4`)
         return false
-    }else if((posicaoColunaObjetivo >= tabuleiroColuna) || (posicaoLinhaObjetivo >= tabuleiroLinha)){
+    }else if((posicaoColunaObjetivo-1 >= columnTabuleiro) || (posicaoLinhaObjetivo-1 >= rowTabuleiro)){
+        // alert(`IF 5`)
         return false
     }else if((posicaoColunaObjetivo == posicaoColunaInicio) && (posicaoLinhaObjetivo == posicaoLinhaInicio)){
+        // alert(`IF 6`)
         return false
     }
 
@@ -71,8 +82,8 @@ function verificacaoDados(){
 function criarEstrutura(){
     i = 0
 
-    for (let row = 0; row < tabuleiroLinha; row++) {
-        for (let column = 0; column < tabuleiroColuna; column++) {
+    for (let row = 0; row < rowTabuleiro; row++) {
+        for (let column = 0; column < columnTabuleiro; column++) {
             //Custo de posição de Forma Random
             custoPosicao = Math.floor(Math.random() * (4))
             //Definindo por do nó apartir do custo
@@ -103,31 +114,49 @@ function criarEstrutura(){
             }else{
                 powerUps = 2
             }
+
+            // Definindo Heuristica
+            heuristica = definirHeuristica(row, column, posicaoLinhaObjetivo, posicaoColunaObjetivo)
             
             // Criando no
             tabuleiroArrayPixel[i] = {
+                "heuristica": heuristica,
                 "custoTerreno": ArrayLegendaColor[custoPosicao].value,    
                 "corTerreno": colorString,      
                 "inicio": inicio,          
                 "fim": fim,             
-                "powerUpIcon": ArrayPowerUps[powerUps].icon,     
-                "powerUpValue" : ArrayPowerUps[powerUps].value   
+                "icon": ArrayPowerUps[powerUps].icon,     
+                "powerUpValue": ArrayPowerUps[powerUps].value,
+                "posicao": i
             }
             i = i + 1
         }
         
     }
 }
+ 
+function definirHeuristica(rowAtual, colAtual, rowObjetivo, colObjetivo){
+    
+    // Pitágoras
+    let heuristica = Math.pow(((rowObjetivo - 1) - rowAtual), 2) +  Math.pow(((colObjetivo - 1) - colAtual), 2)
+    // heuristica =  heuristica +   ((rowObjetivo - 1) - rowAtual) +  ((colObjetivo - 1) - colAtual)
+    // heuristica = heuristica - (rowObjetivo / rowAtual) + (colObjetivo / colAtual)
+    // heuristica = heuristica + (rowAtual / colAtual) + (colAtual / rowAtual)
+    heuristica =Math.floor(heuristica)
+    heuristica = Math.abs(heuristica)
+
+    return heuristica
+}
 
 function renderTabuleiro(){
     debug = false
     let html = '<table cellpaddig=0 cellspacing=0>'
     
-    for (let row = 0; row < tabuleiroLinha; row++) {
+    for (let row = 0; row < rowTabuleiro; row++) {
         html += '<tr>'
 
-        for (let column = 0; column < tabuleiroColuna; column++) {
-            const indiceTabuleiro = column + (tabuleiroColuna * row)
+        for (let column = 0; column < columnTabuleiro; column++) {
+            const indiceTabuleiro = column + (columnTabuleiro * row)
 
             if (debug) {
                 html += '<td>'
@@ -148,7 +177,9 @@ function renderTabuleiro(){
                     
                     // <i class="fas fa-running"></i>
                     html += `<td style="background-color: rgba(${colorString});">`
-                    html += tabuleiroArrayPixel[indiceTabuleiro].powerUpIcon
+                    // html += tabuleiroArrayPixel[indiceTabuleiro].icon
+                    // html += tabuleiroArrayPixel[indiceTabuleiro].heuristica
+                    html += tabuleiroArrayPixel[indiceTabuleiro].posicao
                     html += '</td>'
                 }
             }
@@ -162,4 +193,120 @@ function renderTabuleiro(){
     document.querySelector('#tabuleiro').innerHTML = html
 }
 
+// ********** Algoritimos de Busca ********************
+
+// ---------- A* ----------
+function busca(){
+    
+    let noInicio = null
+    for (let i = 0; i < tabuleiroArrayPixel.length; i++) {
+        
+        if(tabuleiroArrayPixel[i].inicio){
+            noInicio = tabuleiroArrayPixel[i]
+        }
+    }
+
+    estrela(noInicio, 0)
+}
+
+
+function estrela(no, posicao){
+    arrayCaminho[posicao] = no
+
+    if(no.fim || (posicao == 3)){
+        alert('ENCONTROU')
+        return true
+    }else{
+        // definindo Visinhos
+        if(no.posicao - columnTabuleiro >= 0){
+            noCima = tabuleiroArrayPixel[Math.floor(no.posicao - columnTabuleiro)]
+            console.log("Teste", JSON.parse(JSON.stringify(noCima)))
+
+            // Calculando a F(x) (função custo) do proximo ponto
+            valorParaCima = noCima.custoTerreno + noCima.heuristica + noCima.powerUpValue
+        }else{
+            noCima = null
+            valorParaCima = 100000
+        }
+
+        if(no.posicao + columnTabuleiro < rowTabuleiro){
+            noBaixo = tabuleiroArrayPixel[Math.floor(no.posicao + columnTabuleiro)]
+
+            // Calculando a F(x) (função custo) do proximo ponto
+            valorParaBaixo = noBaixo.custoTerreno + noBaixo.heuristica + noBaixo.powerUpValue
+        }else{
+            noBaixo = null
+            valorParaBaixo = 100000
+        }
+
+        if(
+            (no.posicao - 1 >= 0) &&
+            ((no.posicao % 10) != 0)
+        ){
+            noEsquerda = tabuleiroArrayPixel[Math.floor(no.posicao - 1)]
+            console.log("noEsquerda ", JSON.parse(JSON.stringify(noEsquerda)))
+
+            // Calculando a F(x) (função custo) do proximo ponto
+            valorParaEsquerna = noEsquerda.custoTerreno + noEsquerda.heuristica + noEsquerda.powerUpValue
+        }else{
+            noEsquerda = null
+            valorParaEsquerna = 100000
+        }
+
+        if(
+            (no.posicao + 1 < columnTabuleiro) &&
+            (((no.posicao + 1) % 10) != 0)
+        ){
+            noDireita = tabuleiroArrayPixel[Math.floor(no.posicao + 1)]
+            
+            // Calculando a F(x) (função custo) do proximo ponto
+            valorParaDireita = noDireita.custoTerreno + noDireita.heuristica + noDireita.powerUpValue
+        }else{
+            noDireita = null
+            valorParaDireita = 100000
+        }
+
+        // verificando para qual deve caminhar
+
+        console.log("cima ", valorParaCima)
+        console.log("baixo ", valorParaBaixo)
+        console.log("esquerda ", valorParaEsquerna)
+        console.log("direita ", valorParaDireita)
+        console.log("---")
+
+        if(
+            (valorParaCima < valorParaBaixo) &&
+            (valorParaCima < valorParaEsquerna) &&
+            (valorParaCima < valorParaDireita)
+        ){
+            estrela(noCima, (posicao + 1))
+        }else if(
+            (valorParaBaixo < valorParaCima) &&
+            (valorParaBaixo < valorParaEsquerna) &&
+            (valorParaBaixo < valorParaDireita)
+        ){
+            estrela(noBaixo, (posicao + 1))
+        }else if(
+            (valorParaEsquerna < valorParaCima) &&
+            (valorParaEsquerna < valorParaBaixo) &&
+            (valorParaEsquerna < valorParaDireita)
+        ){
+            estrela(noEsquerda, (posicao + 1))
+            
+        }else{
+            estrela(noDireita, (posicao + 1))
+        }
+
+        return true
+        
+    }
+
+    // console.log(JSON.parse(JSON.stringify(noCima)))
+    // console.log(JSON.parse(JSON.stringify(noBaixo)))
+    // console.log(JSON.parse(JSON.stringify(noEsquerda)))
+    // console.log(JSON.parse(JSON.stringify(noDireita)))
+}
+
+
+// ********** START ********************
 star()
