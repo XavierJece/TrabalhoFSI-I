@@ -5,6 +5,8 @@
  */
 package buscasegainformada;
 
+import buscasegainformada.view.Tabuleiro;
+
 /**
  *
  * @author Jece Xavier
@@ -16,6 +18,9 @@ public class BuscaSegaInformada {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        
+        Tabuleiro tabuleiro = new Tabuleiro();
+        tabuleiro.setVisible(true);
     }
     
 }
