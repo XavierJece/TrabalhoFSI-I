@@ -5,6 +5,7 @@
  */
 package buscasegainformada.view;
 
+import buscasegainformada.control.Celula;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ import javax.swing.border.Border;
  */
 public class Tabuleiro extends JFrame{
     //Atributos
+    private ArrayList<Celula> celulas;
+    
     private ArrayList<JLabel> tabuleiro;
     private JLabel lblPosicaoInicial;
     private JLabel lblPosicaoFinal;
@@ -75,6 +78,7 @@ public class Tabuleiro extends JFrame{
     private void renderTabuleiro(int ordemTabuleiro) {
         this.jpTabuleiro = new JPanel();
         this.tabuleiro = new ArrayList<>();
+        this.celulas = new ArrayList<>();
         
         /*Definindo Layout que podemos alterar*/
         this.jpTabuleiro.setLayout(null);
@@ -85,27 +89,41 @@ public class Tabuleiro extends JFrame{
         //Definindo como será a borda
         Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
         
-        int posicaoX = 10, posicaoY = 10, tamanhoCelula = 50;
-        Rectangle posicao;
-        for (int i = 0; i < (ordemTabuleiro * ordemTabuleiro); i++) {
-            JLabel lblCelula = new JLabel("P" + i, JLabel.CENTER);
-            if(((i%10) == 0) && (i != 0)){
-                posicaoY += tamanhoCelula;
-                posicaoX = 10;
+        int posicaoX = 10, posicaoY = 10, tamanhoCelula = 50, posicaoArray = 0;
+        
+        for (int i = 0; i < ordemTabuleiro; i++) {
+            //Iniciando A linha
+            posicaoX = 10;
+            
+            for (int j = 0; j < ordemTabuleiro; j++) {
+               
+                //Crindo Celular e add
+                celulas.add(new Celula(i, j, 9, 9, 0, 0));
                 
+            
+                //Criando Visual Celula
+                JLabel lblCelula = new JLabel(("H" + (celulas.get(posicaoArray).getHeuristica())), JLabel.CENTER);
+            
+                //Definindo o tamanho da celula
+                lblCelula.setBounds(posicaoX, posicaoY, tamanhoCelula, tamanhoCelula);
+                posicaoX += tamanhoCelula;
+
+                //Definindo a borda da celula
+                lblCelula.setBorder(border);
+
+                //Add celula no Array
+                this.tabuleiro.add(lblCelula);
+
+                //Add celula no Painel Tabuleiro
+                this.jpTabuleiro.add(lblCelula);
+                
+                //Incrimentando Contador
+                posicaoArray++;
+            
             }
-            //Definindo o tamanho da celula
-            lblCelula.setBounds(posicaoX, posicaoY, tamanhoCelula, tamanhoCelula);
-            posicaoX += tamanhoCelula;
             
-            //Definindo a borda da celula
-            lblCelula.setBorder(border);
-            
-            //Add celula no Array
-            this.tabuleiro.add(lblCelula);
-            
-            //Add celula no Painel Tabuleiro
-            this.jpTabuleiro.add(lblCelula);
+            //Indo para linha de baixo
+            posicaoY += tamanhoCelula;
         }
         
         //Definindo o tamanho do Tabuleiro
