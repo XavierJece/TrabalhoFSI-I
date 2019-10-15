@@ -5,6 +5,7 @@
  */
 package buscasegainformada.view;
 
+import buscasegainformada.control.Buscas;
 import buscasegainformada.control.Celula;
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -51,6 +52,11 @@ public class Tabuleiro extends JFrame{
     //Contrutor
     public Tabuleiro() {
         definirLayoutTela();
+        
+//        Teste Busca
+        Buscas b = new Buscas();
+        
+        b.buscaEstrela(celulas, 10, 0);
     }
     
     
@@ -98,11 +104,11 @@ public class Tabuleiro extends JFrame{
             for (int j = 0; j < ordemTabuleiro; j++) {
                
                 //Crindo Celular e add
-                celulas.add(new Celula(i, j, 9, 9, 0, 0));
+                celulas.add(new Celula((i+j), i, j, 9, 9, 0, 0));
                 
             
                 //Criando Visual Celula
-                JLabel lblCelula = new JLabel(("H" + (celulas.get(posicaoArray).getHeuristica())), JLabel.CENTER);
+                JLabel lblCelula = new JLabel(("H" + (celulas.get(posicaoArray).custoEstrela())), JLabel.CENTER);
             
                 //Definindo o tamanho da celula
                 lblCelula.setBounds(posicaoX, posicaoY, tamanhoCelula, tamanhoCelula);

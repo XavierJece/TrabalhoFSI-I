@@ -17,15 +17,17 @@ public class Celula {
     private int powerUp;
     private int posicaoX;
     private int posicaoY;
+    private int posicaoArray;
     private int heuristica;
     private boolean inicio;
     private boolean  fim;
     
     //Contrutor
 
-    public Celula(int posicaoX, int posicaoY, int objetivoX, int objetivoY, 
+    public Celula(int posicao, int posicaoX, int posicaoY, int objetivoX, int objetivoY, 
             int incioX, int inicioY) {
         
+        this.posicaoArray = posicao;
         this.posicaoX = posicaoX;
         this.posicaoY = posicaoY;
         
@@ -87,7 +89,11 @@ public class Celula {
         
         this.setHeuristica((int) ((Math.pow(distanciaX,2)) + (Math.pow(distanciaY,2))));
         
-        System.out.println(this.posicaoX + " x " + this.posicaoY + " = " + this.heuristica);
+//        System.out.println(this.posicaoX + " x " + this.posicaoY + " = " + this.heuristica);
+    }
+    
+    public int custoEstrela(){
+        return (this.heuristica + this.custo + this.powerUp);
     }
     
     //Gets end Sets
@@ -122,6 +128,10 @@ public class Celula {
 
     private void setPosicaoY(int posicaoY) {
         this.posicaoY = posicaoY;
+    }
+    
+    public int getPosicaoArray() {
+        return posicaoArray;
     }
 
     public int getHeuristica() {
