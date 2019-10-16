@@ -14,15 +14,18 @@ import java.util.ArrayList;
 public class Buscas {
     //Atributos
     ArrayList<Celula> caminho = new ArrayList<>();
+    ArrayList<Celula> caminhoFinal = new ArrayList<>();
+    ArrayList<Celula> celulasExpandidas = new ArrayList<>();
+    ArrayList<Celula> celulasVisidadas = new ArrayList<>();
     
     //Contrutor
     
     //Minhas funções
     public ArrayList<Celula> buscaEstrela(ArrayList<Celula> lista, int ordemTabuleiro, int posicao){
         
-        if(caminho.contains(lista.get(posicao))){
-            return null;
-        }
+//        if(caminho.contains(lista.get(posicao))){
+//            return null;
+//        }
         
         Celula atual = lista.get(posicao);
 //        System.out.println("Posição Atual: " + atual.getPosicaoArray());;
@@ -115,5 +118,121 @@ public class Buscas {
     }
     
     
+    public ArrayList<Celula> buscaEstrela2(ArrayList<Celula> lista, int ordemTabuleiro, int posicao, Celula pai){
+        
+//        No atual
+        Celula atual = lista.get(posicao);
+        atual.setPai(pai);
+        
+//        Add posição no caminho
+        caminho.add(atual);
+        
+//       Verificando se chegou ao fim
+        if (atual.isFim()) {
+            return null;
+        }
+        
+//        Espandindo os visinhos
+        
+//      Verificando se existe Visinho cima
+        if((posicao - ordemTabuleiro) >= 0){
+            if (!celulasVisidadas.contains(lista.get((posicao-ordemTabuleiro)))) {
+                celulasExpandidas.add(lista.get((posicao-ordemTabuleiro)));
+            }
+        }
+        
+//      Verificando se existe Visinho baixo     
+        if ((posicao + ordemTabuleiro) < Math.pow(ordemTabuleiro, 2)) {
+            if (!celulasVisidadas.contains(lista.get((posicao+ordemTabuleiro)))) {
+                celulasExpandidas.add(lista.get((posicao+ordemTabuleiro)));
+            }
+        }
+        
+//      Verificando se existe Visinho esquerda
+        if ((posicao % 10) != 0) {
+            if (!celulasVisidadas.contains(lista.get((posicao-1)))) {
+               celulasExpandidas.add(lista.get((posicao-1))); 
+            }
+            
+        }
+
+
+//      Verificando se existe Visinho direita
+        if (((posicao + 1) % 10) != 0) {
+            if (!celulasVisidadas.contains(lista.get((posicao+1)))) {
+                celulasExpandidas.add(lista.get((posicao+1)));
+            }
+            
+        }
+
+//        Variavel para quardar o menor custo
+        int posicaoMenorCusto = celulasExpandidas.get(posicaoMenorCusto()).getPosicaoArray();
+        celulasExpandidas.remove(lista.get(posicaoMenorCusto));
+        
+        celulasVisidadas.add(lista.get(posicaoMenorCusto));
+        buscaEstrela2(lista, ordemTabuleiro, posicaoMenorCusto, atual);
+        
+        if(posicao == 0){
+            
+            for (int i = 0; i < caminho.size(); i++) {
+                System.out.println("Caminho " + (i+1) + "ª => " + caminho.get(i).getPosicaoArray());
+            }
+            System.out.println("");
+            for (int i = 0; i < celulasVisidadas.size(); i++) {
+                System.out.println("Visitada " + (i+1) + "ª => " + celulasVisidadas.get(i).getPosicaoArray());
+            }
+        }
+        
+        return this.caminho;
+    }
+    
+    private int posicaoMenorCusto(){
+        
+        //        Variavel para quardar o menor custo
+        int posicaoMenorCusto = 0;
+        
+        for (int i = 1; i < celulasExpandidas.size(); i++) {
+            posicaoMenorCusto = ((celulasExpandidas.get(i).custoEstrela() < 
+                    celulasExpandidas.get(posicaoMenorCusto).custoEstrela()) ? 
+                    i : posicaoMenorCusto);
+        }    
+        
+        return posicaoMenorCusto;
+    }
+    
+    private void caminhoFinal(Celula celula, int ordem){
+        
+        if(celula.getPai() == null){
+            caminhoFinal.add(celula);
+            return;
+        }
+        
+        //VerificarVisinho
+        if(!
+            (((celula.getPosicaoArray() - 1) != celula.getPai().getPosicaoArray()) &&
+            ((celula.getPosicaoArray() + 1) != celula.getPai().getPosicaoArray()) &&
+            ((celula.getPosicaoArray() - ordem) != celula.getPai().getPosicaoArray()) &&
+            ((celula.getPosicaoArray() + ordem) != celula.getPai().getPosicaoArray()))
+        ){
+           
+           caminhoFinal(celula.getPai(), ordem);
+        }else{
+            caminhoFinal(celula.getPai().getPai(), ordem);
+        }
+        
+        caminhoFinal.add(celula);
+        
+        
+    }
+    
     //Gets end Sets
+
+    public ArrayList<Celula> getCaminhoFinal(Celula celula, int ordem) {
+        
+        caminhoFinal(celula, ordem);
+        
+        return caminhoFinal;
+    }
+    
+    
 }

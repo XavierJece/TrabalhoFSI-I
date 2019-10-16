@@ -28,6 +28,7 @@ import javax.swing.border.Border;
 public class Tabuleiro extends JFrame{
     //Atributos
     private ArrayList<Celula> celulas;
+    private  Celula objetivo;
     
     private ArrayList<JLabel> tabuleiro;
     private JLabel lblPosicaoFinal;
@@ -54,12 +55,23 @@ public class Tabuleiro extends JFrame{
 //        Teste Busca
         Buscas b = new Buscas();
         
-        ArrayList<Celula> caminho = b.buscaEstrela(celulas, 10, 0);
+        definindoCelularObjetivo();
+        
+        b.buscaEstrela2(celulas, 10, 0, null);        
+        ArrayList<Celula> caminho = b.getCaminhoFinal(objetivo, 10);
+
         
 //        System.err.println("\n **** Terminou  Tabuleiro****");
         
+        JLabel lblCelula;
+        
         for (int i = 0; i < caminho.size(); i++) {
             System.out.println("Celula " + (i+1) + "ª Vizitada => " + caminho.get(i).getPosicaoArray());
+            
+            lblCelula = tabuleiro.get(caminho.get(i).getPosicaoArray());
+            
+            lblCelula.setBackground(Color.WHITE);
+            
         }
     }
     
@@ -99,7 +111,7 @@ public class Tabuleiro extends JFrame{
         //Definindo como será a borda
         Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
         
-        int posicaoX = 10, posicaoY = 10, tamanhoCelula = 50, posicaoArray = 0;
+        int posicaoX = 10, posicaoY = 10, tamanhoCelula = 60, posicaoArray = 0;
         
         for (int i = 0; i < ordemTabuleiro; i++) {
             //Iniciando A linha
@@ -108,16 +120,19 @@ public class Tabuleiro extends JFrame{
             for (int j = 0; j < ordemTabuleiro; j++) {
                
                 //Crindo Celular e add
-                celulas.add(new Celula((i * ordemTabuleiro + j), i, j, 5, 5, 0, 0));
+                celulas.add(new Celula((i * ordemTabuleiro + j), i, j, 9, 9, 0, 0));                
                 
-            
                 //Criando Visual Celula
-                JLabel lblCelula = new JLabel(("H" + (celulas.get(posicaoArray).custoEstrela())), JLabel.CENTER);
+                JLabel lblCelula = new JLabel(((i * ordemTabuleiro + j) + " H " + (celulas.get(posicaoArray).custoEstrela())), JLabel.CENTER);
             
                 //Definindo o tamanho da celula
                 lblCelula.setBounds(posicaoX, posicaoY, tamanhoCelula, tamanhoCelula);
                 posicaoX += tamanhoCelula;
 
+//                Deixando o fundo visinho
+                lblCelula.setOpaque(true);
+                lblCelula.setBackground(Color.red);
+                
                 //Definindo a borda da celula
                 lblCelula.setBorder(border);
 
@@ -141,6 +156,14 @@ public class Tabuleiro extends JFrame{
         
         //Add Tabueiro na Tela
         this.add(this.jpTabuleiro);
+    }
+    
+    private void definindoCelularObjetivo(){
+        for (int i = 0; i < celulas.size(); i++) {
+            if(celulas.get(i).isFim()){
+                objetivo = celulas.get(i);
+            }
+        }
     }
     
     //Gets end Sets

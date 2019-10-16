@@ -22,6 +22,18 @@ public class Celula {
     private boolean inicio;
     private boolean  fim;
     
+    private Celula pai;
+
+    public Celula getPai() {
+        return pai;
+    }
+
+    public void setPai(Celula pai) {
+        this.pai = pai;
+    }
+
+    
+    
     //Contrutor
 
     public Celula(int posicao, int posicaoX, int posicaoY, int objetivoX, int objetivoY, 
