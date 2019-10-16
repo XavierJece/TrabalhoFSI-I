@@ -31,55 +31,68 @@ public class Celula {
         this.posicaoX = posicaoX;
         this.posicaoY = posicaoY;
         
+        this.setFim(objetivoX, objetivoY);
+        this.setInicio(incioX, inicioY);
+        
         this.definirCusto();
         this.definirPowerUp();
         this.definirHeuristica(objetivoX, objetivoY);
-        this.setFim(objetivoX, objetivoY);
-        this.setInicio(incioX, inicioY);
     }
     
     
     //Minhas funções
     private void definirCusto(){
-        Random rand = new Random();
         
-        int opcao = rand.nextInt(4);
-                
-        /*
-            0 => Solido
-            1 => Arenoso
-            2 => Rochoso
-            3 => Pântano
-        */
-                
-        if(opcao == 0){
-            this.setCusto(1);
-        }else if(opcao == 1){
-            this.setCusto(4);
-        }else if(opcao == 2){
-            this.setCusto(10);
+        if(this.isFim() || this.isInicio()){
+            this.setCusto(0);
         }else{
-            this.setCusto(20);
+
+            Random rand = new Random();
+
+            int opcao = rand.nextInt(4);
+
+            /*
+                0 => Solido
+                1 => Arenoso
+                2 => Rochoso
+                3 => Pântano
+            */
+
+            if(opcao == 0){
+                this.setCusto(1);
+            }else if(opcao == 1){
+                this.setCusto(4);
+            }else if(opcao == 2){
+                this.setCusto(10);
+            }else{
+                this.setCusto(20);
+            }
         }
     }
     
     private void definirPowerUp(){
-        Random rand = new Random();
         
-        int opcao = rand.nextInt(3);
-                
-        /*
-            0 => Nada
-            1 => Bonus
-            2 => Prejuiso
-        */
-                
-        if(opcao == 0){
+        if(this.isFim() || this.isInicio()){
             this.setPowerUp(0);
-        }else if(opcao == 1){
-            this.setPowerUp(-5);
         }else{
-            this.setPowerUp(5);
+        
+            Random rand = new Random();
+
+            int opcao = rand.nextInt(3);
+
+            /*
+                0 => Nada
+                1 => Bonus
+                2 => Prejuiso
+            */
+
+            if(opcao == 0){
+                this.setPowerUp(1);
+            }else if(opcao == 1){
+                this.setPowerUp(0);
+            }else{
+                this.setPowerUp(5);
+            }
         }
     }
     

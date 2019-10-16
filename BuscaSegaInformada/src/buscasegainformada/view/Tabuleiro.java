@@ -30,7 +30,6 @@ public class Tabuleiro extends JFrame{
     private ArrayList<Celula> celulas;
     
     private ArrayList<JLabel> tabuleiro;
-    private JLabel lblPosicaoInicial;
     private JLabel lblPosicaoFinal;
     private JLabel lblTipoBusca;
     
@@ -38,7 +37,6 @@ public class Tabuleiro extends JFrame{
     private JPanel jpLegenda;
     private JPanel jpTabuleiro;
     
-    private JTextField txtPosicaoInicial;
     private JTextField txtPosicaoFinal;
   
     private JButton btnBuscar;
@@ -56,7 +54,13 @@ public class Tabuleiro extends JFrame{
 //        Teste Busca
         Buscas b = new Buscas();
         
-        b.buscaEstrela(celulas, 10, 0);
+        ArrayList<Celula> caminho = b.buscaEstrela(celulas, 10, 0);
+        
+//        System.err.println("\n **** Terminou  Tabuleiro****");
+        
+        for (int i = 0; i < caminho.size(); i++) {
+            System.out.println("Celula " + (i+1) + "ª Vizitada => " + caminho.get(i).getPosicaoArray());
+        }
     }
     
     
@@ -104,7 +108,7 @@ public class Tabuleiro extends JFrame{
             for (int j = 0; j < ordemTabuleiro; j++) {
                
                 //Crindo Celular e add
-                celulas.add(new Celula((i+j), i, j, 9, 9, 0, 0));
+                celulas.add(new Celula((i * ordemTabuleiro + j), i, j, 5, 5, 0, 0));
                 
             
                 //Criando Visual Celula

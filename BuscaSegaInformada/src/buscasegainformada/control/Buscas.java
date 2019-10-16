@@ -19,13 +19,20 @@ public class Buscas {
     
     //Minhas funções
     public ArrayList<Celula> buscaEstrela(ArrayList<Celula> lista, int ordemTabuleiro, int posicao){
+        
+        if(caminho.contains(lista.get(posicao))){
+            return null;
+        }
+        
         Celula atual = lista.get(posicao);
-        System.out.println("Posição Atual: " + atual.getPosicaoArray());
-        int custos[] = new int[4];
+//        System.out.println("Posição Atual: " + atual.getPosicaoArray());;
+        
+        int custoCima, custoBaixo, custoEsquerda, custoDireita;
         
 //        Verificando se chegamos no fim
         if(atual.isFim()){
-            return this.caminho;
+//            System.err.println("*************ENCONTROU****************");
+            return null;
         }else{
 //            Criando visinho
             Celula cima, baixo, esquerda, direita;
@@ -47,51 +54,55 @@ public class Buscas {
             direita = (((((posicao + 1) % 10) == 0)) ? null : lista.get((posicao+1)));
             
             if(cima == null){
-               custos[0] = 1000;
+               custoCima = 1000;
             }else{
-                 custos[0] = cima.custoEstrela();
+                custoCima = cima.custoEstrela();
             }
             
             if(baixo == null){
-                 custos[1] = 1000;
+                 custoBaixo = 1000;
             }else{
-               custos[1] = baixo.custoEstrela();
+               custoBaixo = baixo.custoEstrela();
             }
             
             if(esquerda == null){
-                custos[2] = 1000;
+                custoEsquerda = 1000;
             }else{
-                custos[2] = esquerda.custoEstrela();
+                custoEsquerda = esquerda.custoEstrela();
             }
             
             if(direita == null){
-                custos[3] = 1000;
+                custoDireita = 1000;
             }else{
-                custos[3] = direita.custoEstrela();
+                custoDireita = direita.custoEstrela();
             }
             
+//            System.out.println("Posição Atual: " + atual.getPosicaoArray() + 
+//                    " Cima: " + custoCima + 
+//                    " Baixo: " + custoBaixo + 
+//                    " Esquerda: " + custoEsquerda + 
+//                    " Direita: " + custoDireita);
             
-            if(
-                (custos[0] < custos[1]) &&
-                (custos[0] < custos[2]) &&
-                (custos[0] < custos[3])
-            ){
+            if((custoCima < custoBaixo) && (custoCima < custoEsquerda) && (custoCima < custoDireita)){
+                
+//                System.out.println("Indo para cima => Posicao: " + cima.getPosicaoArray());
                 buscaEstrela(lista, ordemTabuleiro, cima.getPosicaoArray());
-            }else if(
-                (custos[1] < custos[0]) &&
-                (custos[1] < custos[2]) &&
-                (custos[1] < custos[3])
-            ){
+                
+            }else if((custoBaixo < custoCima) && (custoBaixo < custoEsquerda) && (custoBaixo < custoDireita)){
+                
+//                System.out.println("Indo para baixoo => Posicao: " + baixo.getPosicaoArray());
                 buscaEstrela(lista, ordemTabuleiro, baixo.getPosicaoArray());
-            }else if(
-                (custos[2] < custos[0]) &&
-                (custos[2] < custos[1]) &&
-                (custos[2] < custos[3])
-            ){
+                
+            }else if((custoEsquerda < custoCima) && (custoEsquerda < custoBaixo) && (custoEsquerda < custoDireita)){
+                
+//                System.out.println("Indo para esquerda => Posicao: " + esquerda.getPosicaoArray());
                 buscaEstrela(lista, ordemTabuleiro, esquerda.getPosicaoArray());
+                
             }else{
+//                System.out.println("Indo para direita => Posicao: " + direita.getPosicaoArray());
                 buscaEstrela(lista, ordemTabuleiro, direita.getPosicaoArray());
             }
+//            *******************************************************
             
         }
         
@@ -99,7 +110,7 @@ public class Buscas {
         
         
         
-        return null;
+        return this.caminho;
         
     }
     
