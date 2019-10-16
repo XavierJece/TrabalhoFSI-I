@@ -106,7 +106,7 @@ public class Tabuleiro extends JFrame{
         this.jpTabuleiro.setLayout(null);
         
         /*Definindo Dor de fundo*/
-        this.jpTabuleiro.setBackground(new Color(148, 207, 185));
+        this.jpTabuleiro.setBackground(Color.WHITE);
         
         //Definindo como será a borda
         Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
@@ -131,7 +131,7 @@ public class Tabuleiro extends JFrame{
 
 //                Deixando o fundo visinho
                 lblCelula.setOpaque(true);
-                lblCelula.setBackground(Color.red);
+                lblCelula.setBackground(definirCorCelula(celulas.get(posicaoArray).getCusto()));
                 
                 //Definindo a borda da celula
                 lblCelula.setBorder(border);
@@ -163,6 +163,20 @@ public class Tabuleiro extends JFrame{
             if(celulas.get(i).isFim()){
                 objetivo = celulas.get(i);
             }
+        }
+    }
+    
+    private Color definirCorCelula(int custo){
+        if(custo == 1){
+            return new Color(0, 0, 0, 85);
+        }else if(custo == 4){
+            return new Color(235, 168, 168, 255);
+        }else if(custo == 10){
+            return new Color(0, 0, 0, 170);
+        }else if(custo == 20){
+            return new Color(27, 114, 5, 255);
+        }else{
+            return Color.WHITE;
         }
     }
     
