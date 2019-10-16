@@ -8,9 +8,12 @@ package buscasegainformada.view;
 import buscasegainformada.control.Buscas;
 import buscasegainformada.control.Celula;
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -122,9 +125,11 @@ public class Tabuleiro extends JFrame{
                 //Crindo Celular e add
                 celulas.add(new Celula((i * ordemTabuleiro + j), i, j, 9, 9, 0, 0));                
                 
-                //Criando Visual Celula
-                JLabel lblCelula = new JLabel(((i * ordemTabuleiro + j) + " H " + (celulas.get(posicaoArray).custoEstrela())), JLabel.CENTER);
+//                Criando Visual Celula
+//                JLabel lblCelula = new JLabel(((i * ordemTabuleiro + j) + " H " + (celulas.get(posicaoArray).custoEstrela())), JLabel.CENTER);
+                JLabel lblCelula = new JLabel();
             
+                
                 //Definindo o tamanho da celula
                 lblCelula.setBounds(posicaoX, posicaoY, tamanhoCelula, tamanhoCelula);
                 posicaoX += tamanhoCelula;
@@ -132,6 +137,9 @@ public class Tabuleiro extends JFrame{
 //                Deixando o fundo visinho
                 lblCelula.setOpaque(true);
                 lblCelula.setBackground(definirCorCelula(celulas.get(posicaoArray).getCusto()));
+                
+//                Definindo Icon
+                lblCelula.setIcon(definirIcon(celulas.get(posicaoArray).getPowerUp(), celulas.get(posicaoArray).isInicio(), tamanhoCelula));
                 
                 //Definindo a borda da celula
                 lblCelula.setBorder(border);
@@ -168,15 +176,48 @@ public class Tabuleiro extends JFrame{
     
     private Color definirCorCelula(int custo){
         if(custo == 1){
-            return new Color(0, 0, 0, 85);
+            return new Color(0, 0, 0, 50);
         }else if(custo == 4){
-            return new Color(235, 168, 168, 255);
+            return new Color(235, 168, 168, 200);
         }else if(custo == 10){
-            return new Color(0, 0, 0, 170);
+            return new Color(0, 0, 0, 150);
         }else if(custo == 20){
-            return new Color(27, 114, 5, 255);
+            return new Color(50, 114, 10, 170);
         }else{
             return Color.WHITE;
+        }
+    }
+    
+    private Icon definirIcon(int custo, boolean inicio, int dimencao){
+        String path = "C:\\Users\\Jece Xavier\\Documents\\MY-Projects\\"
+                + "00-FACULDADE\\FSI\\TRABALHO_01\\BuscaSegaInformada\\"
+                + "src\\buscasegainformada\\img\\";
+        
+        
+        if(custo == 1){
+            ImageIcon img = new ImageIcon(path + "PowerUpBom.png"); 
+            Image image = img.getImage().getScaledInstance(dimencao, dimencao, Image.SCALE_SMOOTH);
+            ImageIcon imageIcon = new ImageIcon(image);
+            return imageIcon;
+        }else if(custo == 2){
+            return null;
+        }else if(custo == 5){
+            ImageIcon img = new ImageIcon(path + "/img/PowerUpRuim.png"); 
+            Image image = img.getImage().getScaledInstance(dimencao, dimencao, Image.SCALE_SMOOTH);
+            ImageIcon imageIcon = new ImageIcon(image);
+            return imageIcon;
+        }else{
+            if(inicio){
+                ImageIcon img = new ImageIcon(path + "/img/Inicio.png"); 
+                Image image = img.getImage().getScaledInstance(dimencao, dimencao, Image.SCALE_SMOOTH);
+                ImageIcon imageIcon = new ImageIcon(image);
+                return imageIcon;
+            }else{
+                ImageIcon img = new ImageIcon(path + "/img/Objetivo.png"); 
+                Image image = img.getImage().getScaledInstance(dimencao, dimencao, Image.SCALE_SMOOTH);
+                ImageIcon imageIcon = new ImageIcon(image);
+                return imageIcon;
+            }
         }
     }
     
