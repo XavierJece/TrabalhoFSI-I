@@ -13,27 +13,31 @@ import java.util.ArrayList;
  */
 public class Buscas {
     //Atributos
-    ArrayList<Celula> caminho = new ArrayList<>();
-    ArrayList<Celula> caminhoFinal = new ArrayList<>();
-    ArrayList<Celula> celulasExpandidas = new ArrayList<>();
-    ArrayList<Celula> celulasVisidadas = new ArrayList<>();
-    ArrayList<Celula> listaDeExpancao = new ArrayList<>();
+    ArrayList<Celula> caminho;
+    ArrayList<Celula> caminhoFinal;
+    ArrayList<Celula> celulasExpandidas;
+    ArrayList<Celula> celulasVisidadas;
+    ArrayList<Celula> listaDeExpancao;
     
     //Contrutor
-    
+    public Buscas(){    
+        caminho = new ArrayList<>();
+        caminhoFinal = new ArrayList<>();
+        celulasExpandidas = new ArrayList<>();
+        celulasVisidadas = new ArrayList<>();
+        listaDeExpancao = new ArrayList<>();
+    }
+
     //Minhas funções
-    public ArrayList<Celula> buscaEstrela(ArrayList<Celula> lista, int ordemTabuleiro, int posicao){
-        
-//        if(caminho.contains(lista.get(posicao))){
+    private ArrayList<Celula> buscaEstrela(ArrayList<Celula> lista, int ordemTabuleiro, int posicao) {
+        //        if(caminho.contains(lista.get(posicao))){
 //            return null;
 //        }
         
         Celula atual = lista.get(posicao);
 //        System.out.println("Posição Atual: " + atual.getPosicaoArray());;
-        
         int custoCima, custoBaixo, custoEsquerda, custoDireita;
-        
-//        Verificando se chegamos no fim
+        //        Verificando se chegamos no fim
         if(atual.isFim()){
 //            System.err.println("*************ENCONTROU****************");
             return null;
@@ -52,21 +56,21 @@ public class Buscas {
 
 //            Verificando se existe Visinho esquerda
             esquerda = ((((posicao % 10) == 0)) ? null : lista.get((posicao-1)));
-
+            
             
 //            Verificando se existe Visinho direita
             direita = (((((posicao + 1) % 10) == 0)) ? null : lista.get((posicao+1)));
             
             if(cima == null){
-               custoCima = 1000;
+                custoCima = 1000;
             }else{
                 custoCima = cima.custoEstrela();
             }
             
             if(baixo == null){
-                 custoBaixo = 1000;
+                custoBaixo = 1000;
             }else{
-               custoBaixo = baixo.custoEstrela();
+                custoBaixo = baixo.custoEstrela();
             }
             
             if(esquerda == null){
@@ -81,9 +85,9 @@ public class Buscas {
                 custoDireita = direita.custoEstrela();
             }
             
-//            System.out.println("Posição Atual: " + atual.getPosicaoArray() + 
-//                    " Cima: " + custoCima + 
-//                    " Baixo: " + custoBaixo + 
+//            System.out.println("Posição Atual: " + atual.getPosicaoArray() +
+//                    " Cima: " + custoCima +
+//                    " Baixo: " + custoBaixo +
 //                    " Esquerda: " + custoEsquerda + 
 //                    " Direita: " + custoDireita);
             
@@ -109,17 +113,16 @@ public class Buscas {
 //            *******************************************************
             
         }
-        
-        
-        
-        
-        
         return this.caminho;
-        
     }
     
-    
-    public ArrayList<Celula> buscaEstrela2(ArrayList<Celula> lista, int ordemTabuleiro, int posicao){
+    /**
+     * Função que realmente faz a busca estrela
+     * @param lista Lista onde estão as celulas para fazer a busca (O grafo)
+     * @param ordemTabuleiro A dimenção do tabuleiro
+     * @param posicao Posição onde a celula atual se encontra na lista (Grafo)
+     */
+    private void estrela(ArrayList<Celula> lista, int ordemTabuleiro, int posicao){
         
 //        No atual
         Celula atual = lista.get(posicao);
@@ -129,17 +132,86 @@ public class Buscas {
         
 //       Verificando se chegou ao fim
         if (atual.isFim()) {
-            return null;
+            return;
         }
         
 //        Espandindo os visinhos
+        this.expandirVizinhos(lista, ordemTabuleiro, posicao);
         
-//      Verificando se existe Visinho cima
+
+//        Variavel para quardar o menor custo
+        int posicaoMenorCusto = celulasExpandidas.get(posicaoMenorCusto()).getPosicaoArray();
+        celulasExpandidas.remove(lista.get(posicaoMenorCusto));
+        
+//        Add a celula que será vizitada na lista de visitadas
+        celulasVisidadas.add(lista.get(posicaoMenorCusto));
+        
+//        Verifica caminho invalido
+        this.veridicaCaminhoInvalido(lista, lista.get(posicaoMenorCusto), atual);
+        
+//        Aplica a recursividade
+        estrela(lista, ordemTabuleiro, posicaoMenorCusto);
+    }
+    
+    /**
+     * Função para saber qual das celulas expandidas tem o menor custo
+     * @return A posição a lista real (Grafo)
+     */
+    private int posicaoMenorCusto(){
+        
+        //        Variavel para quardar o menor custo
+        int posicaoMenorCusto = 0;
+        
+        for (int i = 1; i < celulasExpandidas.size(); i++) {
+            
+//            Confição ternaria 
+            posicaoMenorCusto = ((celulasExpandidas.get(i).custoEstrela() <= 
+                    celulasExpandidas.get(posicaoMenorCusto).custoEstrela()) ? 
+                    i : posicaoMenorCusto);
+        }    
+        
+        return posicaoMenorCusto;
+    }
+    
+    /**
+     * Função para fazer de forma recursiva a caminhada da celula objetivo até
+     * a celula inicial
+     * @param celula A celula que é o objetivo
+     */
+    private void caminhoFinal(Celula celula){
+        
+        //Verifica se é a celula inicial
+        if(celula.getPai() == null || celula.getPosicaoArray() == 0){
+            caminhoFinal.add(celula);
+            return;
+        }
+        
+        //Add a posição na lista
+        caminhoFinal.add(celula);
+        //Recurvificade, voltando
+        caminhoFinal(celula.getPai());
+        
+    }
+    
+    /**
+     * Função destinada para Expardir as celulas vizinho da celula atual.
+     * Função também defini os pais das celulas expandidas
+     * @param lista Lista onde estão as celulas para fazer a busca (O grafo)
+     * @param ordemTabuleiro A dimenção do tabuleiro
+     * @param posicao Posição onde a celula atual se encontra na lista (Grafo)
+     */
+    private void expandirVizinhos(ArrayList<Celula> lista, int ordemTabuleiro, int posicao){
+        
+        //        No atual (Pai dos que serão) Expandidos
+        Celula atual = lista.get(posicao);
+        
+        //      Verificando se existe Visinho cima
         if((posicao - ordemTabuleiro) >= 0){
             if (!celulasVisidadas.contains(lista.get((posicao-ordemTabuleiro)))) {
                 celulasExpandidas.add(lista.get((posicao-ordemTabuleiro)));
                 listaDeExpancao.add(lista.get((posicao-ordemTabuleiro)));
                 
+//                Verificando se já não existe Pai
                 if(lista.get((posicao-ordemTabuleiro)).getPai() == null){
                     lista.get((posicao-ordemTabuleiro)).setPai(atual);
                 }
@@ -151,7 +223,8 @@ public class Buscas {
             if (!celulasVisidadas.contains(lista.get((posicao+ordemTabuleiro)))) {
                 celulasExpandidas.add(lista.get((posicao+ordemTabuleiro)));
                 listaDeExpancao.add(lista.get((posicao+ordemTabuleiro)));
-                
+                                
+//                Verificando se já não existe Pai
                 if(lista.get((posicao+ordemTabuleiro)).getPai() == null){
                     lista.get((posicao+ordemTabuleiro)).setPai(atual);
                 }
@@ -163,7 +236,8 @@ public class Buscas {
             if (!celulasVisidadas.contains(lista.get((posicao-1)))) {
                celulasExpandidas.add(lista.get((posicao-1)));
                listaDeExpancao.add(lista.get((posicao-1)));
-               
+                               
+//                Verificando se já não existe Pai
                if(lista.get((posicao-1)).getPai() == null){
                  lista.get((posicao-1)).setPai(atual);  
                }
@@ -171,100 +245,78 @@ public class Buscas {
             }
             
         }
-
-
+        
 //      Verificando se existe Visinho direita
         if (((posicao + 1) % 10) != 0) {
             if (!celulasVisidadas.contains(lista.get((posicao+1)))) {
                 celulasExpandidas.add(lista.get((posicao+1)));
                 listaDeExpancao.add(lista.get((posicao+1)));
-                
+                                
+//                Verificando se já não existe Pai
                 if(lista.get((posicao+1)).getPai() == null){
                     lista.get((posicao+1)).setPai(atual);
                 }
             }
             
         }
-
-//        Variavel para quardar o menor custo
-        int posicaoMenorCusto = celulasExpandidas.get(posicaoMenorCusto()).getPosicaoArray();
-        celulasExpandidas.remove(lista.get(posicaoMenorCusto));
+    }
+    
+    /**
+     * Verifica se a celula atual é um caminho invalido ou não e 
+     * REMOVE da lista de caminhos
+     * @param lista Lista onde estão as celulas para fazer a busca (O grafo)
+     * @param proxima Celula que será a proxima a ser vizitada
+     * @param atual  Celula atual que está sendo verificada
+     */
+    private void veridicaCaminhoInvalido(ArrayList<Celula> lista, Celula proxima, Celula atual){
         
-        celulasVisidadas.add(lista.get(posicaoMenorCusto));
+        /** Ideia da Função
+         *  Partindo do presuposto que o caminho é valido.
+         * Verifica-se se a celula que tem o menor custo é Vizinha do no atual
+         * Para ser vizinha precisa ter sido expandida agora
+         * Caso não expandida agora, logo esse no atual é invalido.
+         */
         
-        //Verifica caminho invalido
         boolean espandidoAgora = false;
         
+//        Procurando se foi expandida agora
         for (int i = 0; i < listaDeExpancao.size(); i++) {
-            if(listaDeExpancao.contains(lista.get(posicaoMenorCusto))){
+            if(listaDeExpancao.contains(proxima)){
                 espandidoAgora = true;
             }
         }
+//        Limpando a linda de Expanção agora
         listaDeExpancao.clear();
         
+//        Removendo celula caso seja invalida
         if(!espandidoAgora){
             caminho.remove(atual);
         }
+    }
+    
+    /**
+     * Função que busca a caminho encontrando pela busca A Estrela
+     * @param lista Lista onde estão as celulas para fazer a busca (O grafo)
+     * @param ordemTabuleiro A dimenção do tabuleiro
+     * @return retorma a caminho encontrando
+     */
+    public ArrayList<Celula> getCaminhoFinalBuscaEstrela(ArrayList<Celula> lista, int ordemTabuleiro) {
         
-        buscaEstrela2(lista, ordemTabuleiro, posicaoMenorCusto);
+//        Celula que será o objetivo
+        Celula celula = null;
         
-        if(posicao == 0){
-            
-            for (int i = 0; i < caminho.size(); i++) {
-                System.out.println("Caminho " + (i+1) + "ª => " + caminho.get(i).getPosicaoArray());
-            }
-            System.out.println("");
-            for (int i = 0; i < celulasVisidadas.size(); i++) {
-                System.out.println("Visitada " + (i+1) + "ª => " + celulasVisidadas.get(i).getPosicaoArray());
+//        Encontrando o Objetivo
+        for (int i = 0; i < lista.size(); i++) {
+            if(lista.get(i).isFim()){
+                celula = lista.get(i);
             }
         }
         
-        return this.caminho;
-    }
-    
-    private int posicaoMenorCusto(){
+//        Função que realmente faz a busca
+        this.estrela(lista, ordemTabuleiro, 0);
         
-        //        Variavel para quardar o menor custo
-        int posicaoMenorCusto = 0;
-        
-        for (int i = 1; i < celulasExpandidas.size(); i++) {
-            posicaoMenorCusto = ((celulasExpandidas.get(i).custoEstrela() <= 
-                    celulasExpandidas.get(posicaoMenorCusto).custoEstrela()) ? 
-                    i : posicaoMenorCusto);
-        }    
-        
-        return posicaoMenorCusto;
-    }
-    
-    private void caminhoFinal(Celula celula, int ordem){
-        
-        if(celula.getPai() == null || celula.getPosicaoArray() == 0){
-            caminhoFinal.add(celula);
-            return;
-        }
-        
-//        //VerificarVisinho
-//        if(!
-//            (((celula.getPosicaoArray() - 1) != celula.getPai().getPosicaoArray()) &&
-//            ((celula.getPosicaoArray() + 1) != celula.getPai().getPosicaoArray()) &&
-//            ((celula.getPosicaoArray() - ordem) != celula.getPai().getPosicaoArray()) &&
-//            ((celula.getPosicaoArray() + ordem) != celula.getPai().getPosicaoArray()))
-//        ){
-//           
-//           caminhoFinal(celula.getPai(), ordem);
-//        }else{
-//            caminhoFinal(celula.getPai().getPai(), ordem);
-//        }
-        caminhoFinal.add(celula);
-        caminhoFinal(celula.getPai(), ordem);
-        
-    }
-    
-    //Gets end Sets
-
-    public ArrayList<Celula> getCaminhoFinal(Celula celula, int ordem) {
-        
-        caminhoFinal(celula, ordem);
+//        Chamando Recursividade;
+        this.caminhoFinal(celula);
         
         return caminhoFinal;
     }

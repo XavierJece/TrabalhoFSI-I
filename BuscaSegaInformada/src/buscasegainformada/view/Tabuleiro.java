@@ -55,11 +55,10 @@ public class Tabuleiro extends JFrame{
 //        Teste Busca
         Buscas b = new Buscas();
         
-        definindoCelularObjetivo();
+        definindoCelulaObjetivo();
         
-        b.buscaEstrela2(celulas, 10, 0);
 //        ArrayList<Celula> caminho = b.buscaEstrela2(celulas, 10, 0);
-        ArrayList<Celula> caminho = b.getCaminhoFinal(objetivo, 10);
+        ArrayList<Celula> caminho = b.getCaminhoFinalBuscaEstrela(celulas, (int) Math.sqrt(celulas.size()));
 
         
 //        System.err.println("\n **** Terminou  Tabuleiro****");
@@ -159,7 +158,7 @@ public class Tabuleiro extends JFrame{
         this.add(this.jpTabuleiro);
     }
     
-    private void definindoCelularObjetivo(){
+    private void definindoCelulaObjetivo(){
         for (int i = 0; i < celulas.size(); i++) {
             if(celulas.get(i).isFim()){
                 objetivo = celulas.get(i);
