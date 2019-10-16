@@ -92,7 +92,7 @@ public class Celula {
         
             Random rand = new Random();
 
-            int opcao = rand.nextInt(3);
+            int opcao = rand.nextInt(10);
 
             /*
                 0 => Nada
@@ -100,9 +100,9 @@ public class Celula {
                 2 => Prejuiso
             */
 
-            if(opcao == 0){
+            if(opcao <=7){
                 this.setPowerUp(2);
-            }else if(opcao == 1){
+            }else if(opcao == 8){
                 this.setPowerUp(1);
             }else{
                 this.setPowerUp(5);
@@ -190,7 +190,7 @@ public class Celula {
         return fim;
     }
 
-    private void setFim(int x, int y) {
+    public void setFim(int x, int y) {
         
         if(
             ((x == this.posicaoX) && (y == this.posicaoY))
@@ -199,6 +199,13 @@ public class Celula {
         }else{
             this.fim = false;
         }
+        
+        
+    }
+    
+    public void setFim(boolean fim) {
+        
+        this.fim = fim;
         
         
     }
