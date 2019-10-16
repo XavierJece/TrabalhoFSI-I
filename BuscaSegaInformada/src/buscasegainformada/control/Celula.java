@@ -49,6 +49,8 @@ public class Celula {
         this.definirCusto();
         this.definirPowerUp();
         this.definirHeuristica(objetivoX, objetivoY);
+        
+        this.setPai(null);
     }
     
     

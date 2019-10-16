@@ -17,6 +17,7 @@ public class Buscas {
     ArrayList<Celula> caminhoFinal = new ArrayList<>();
     ArrayList<Celula> celulasExpandidas = new ArrayList<>();
     ArrayList<Celula> celulasVisidadas = new ArrayList<>();
+    ArrayList<Celula> listaDeExpancao = new ArrayList<>();
     
     //Contrutor
     
@@ -118,11 +119,10 @@ public class Buscas {
     }
     
     
-    public ArrayList<Celula> buscaEstrela2(ArrayList<Celula> lista, int ordemTabuleiro, int posicao, Celula pai){
+    public ArrayList<Celula> buscaEstrela2(ArrayList<Celula> lista, int ordemTabuleiro, int posicao){
         
 //        No atual
         Celula atual = lista.get(posicao);
-        atual.setPai(pai);
         
 //        Add posição no caminho
         caminho.add(atual);
@@ -138,6 +138,11 @@ public class Buscas {
         if((posicao - ordemTabuleiro) >= 0){
             if (!celulasVisidadas.contains(lista.get((posicao-ordemTabuleiro)))) {
                 celulasExpandidas.add(lista.get((posicao-ordemTabuleiro)));
+                listaDeExpancao.add(lista.get((posicao-ordemTabuleiro)));
+                
+                if(lista.get((posicao-ordemTabuleiro)).getPai() == null){
+                    lista.get((posicao-ordemTabuleiro)).setPai(atual);
+                }
             }
         }
         
@@ -145,13 +150,24 @@ public class Buscas {
         if ((posicao + ordemTabuleiro) < Math.pow(ordemTabuleiro, 2)) {
             if (!celulasVisidadas.contains(lista.get((posicao+ordemTabuleiro)))) {
                 celulasExpandidas.add(lista.get((posicao+ordemTabuleiro)));
+                listaDeExpancao.add(lista.get((posicao+ordemTabuleiro)));
+                
+                if(lista.get((posicao+ordemTabuleiro)).getPai() == null){
+                    lista.get((posicao+ordemTabuleiro)).setPai(atual);
+                }
             }
         }
         
 //      Verificando se existe Visinho esquerda
         if ((posicao % 10) != 0) {
             if (!celulasVisidadas.contains(lista.get((posicao-1)))) {
-               celulasExpandidas.add(lista.get((posicao-1))); 
+               celulasExpandidas.add(lista.get((posicao-1)));
+               listaDeExpancao.add(lista.get((posicao-1)));
+               
+               if(lista.get((posicao-1)).getPai() == null){
+                 lista.get((posicao-1)).setPai(atual);  
+               }
+               
             }
             
         }
@@ -161,6 +177,11 @@ public class Buscas {
         if (((posicao + 1) % 10) != 0) {
             if (!celulasVisidadas.contains(lista.get((posicao+1)))) {
                 celulasExpandidas.add(lista.get((posicao+1)));
+                listaDeExpancao.add(lista.get((posicao+1)));
+                
+                if(lista.get((posicao+1)).getPai() == null){
+                    lista.get((posicao+1)).setPai(atual);
+                }
             }
             
         }
@@ -170,7 +191,22 @@ public class Buscas {
         celulasExpandidas.remove(lista.get(posicaoMenorCusto));
         
         celulasVisidadas.add(lista.get(posicaoMenorCusto));
-        buscaEstrela2(lista, ordemTabuleiro, posicaoMenorCusto, atual);
+        
+        //Verifica caminho invalido
+        boolean espandidoAgora = false;
+        
+        for (int i = 0; i < listaDeExpancao.size(); i++) {
+            if(listaDeExpancao.contains(lista.get(posicaoMenorCusto))){
+                espandidoAgora = true;
+            }
+        }
+        listaDeExpancao.clear();
+        
+        if(!espandidoAgora){
+            caminho.remove(atual);
+        }
+        
+        buscaEstrela2(lista, ordemTabuleiro, posicaoMenorCusto);
         
         if(posicao == 0){
             
@@ -192,7 +228,7 @@ public class Buscas {
         int posicaoMenorCusto = 0;
         
         for (int i = 1; i < celulasExpandidas.size(); i++) {
-            posicaoMenorCusto = ((celulasExpandidas.get(i).custoEstrela() < 
+            posicaoMenorCusto = ((celulasExpandidas.get(i).custoEstrela() <= 
                     celulasExpandidas.get(posicaoMenorCusto).custoEstrela()) ? 
                     i : posicaoMenorCusto);
         }    
@@ -202,26 +238,25 @@ public class Buscas {
     
     private void caminhoFinal(Celula celula, int ordem){
         
-        if(celula.getPai() == null){
+        if(celula.getPai() == null || celula.getPosicaoArray() == 0){
             caminhoFinal.add(celula);
             return;
         }
         
-        //VerificarVisinho
-        if(!
-            (((celula.getPosicaoArray() - 1) != celula.getPai().getPosicaoArray()) &&
-            ((celula.getPosicaoArray() + 1) != celula.getPai().getPosicaoArray()) &&
-            ((celula.getPosicaoArray() - ordem) != celula.getPai().getPosicaoArray()) &&
-            ((celula.getPosicaoArray() + ordem) != celula.getPai().getPosicaoArray()))
-        ){
-           
-           caminhoFinal(celula.getPai(), ordem);
-        }else{
-            caminhoFinal(celula.getPai().getPai(), ordem);
-        }
-        
+//        //VerificarVisinho
+//        if(!
+//            (((celula.getPosicaoArray() - 1) != celula.getPai().getPosicaoArray()) &&
+//            ((celula.getPosicaoArray() + 1) != celula.getPai().getPosicaoArray()) &&
+//            ((celula.getPosicaoArray() - ordem) != celula.getPai().getPosicaoArray()) &&
+//            ((celula.getPosicaoArray() + ordem) != celula.getPai().getPosicaoArray()))
+//        ){
+//           
+//           caminhoFinal(celula.getPai(), ordem);
+//        }else{
+//            caminhoFinal(celula.getPai().getPai(), ordem);
+//        }
         caminhoFinal.add(celula);
-        
+        caminhoFinal(celula.getPai(), ordem);
         
     }
     

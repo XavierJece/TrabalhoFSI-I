@@ -57,7 +57,8 @@ public class Tabuleiro extends JFrame{
         
         definindoCelularObjetivo();
         
-        b.buscaEstrela2(celulas, 10, 0, null);        
+        b.buscaEstrela2(celulas, 10, 0);
+//        ArrayList<Celula> caminho = b.buscaEstrela2(celulas, 10, 0);
         ArrayList<Celula> caminho = b.getCaminhoFinal(objetivo, 10);
 
         
