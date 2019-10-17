@@ -105,7 +105,7 @@ public class Celula {
             }else if(opcao == 8){
                 this.setPowerUp(1);
             }else{
-                this.setPowerUp(5);
+                this.setPowerUp(15);
             }
         }
     }

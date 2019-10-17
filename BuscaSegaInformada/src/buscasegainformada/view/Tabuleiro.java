@@ -351,7 +351,7 @@ public class Tabuleiro extends JFrame{
             return imageIcon;
         }else if(custo == 2){
             return null;
-        }else if(custo == 5){
+        }else if(custo == 15){
             ImageIcon img = new ImageIcon(path + "PowerUpRuim.png"); 
             Image image = img.getImage().getScaledInstance(dimencao, dimencao, Image.SCALE_SMOOTH);
             ImageIcon imageIcon = new ImageIcon(image);
