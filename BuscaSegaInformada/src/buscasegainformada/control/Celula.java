@@ -55,7 +55,7 @@ public class Celula {
     
     
     //Minhas funções
-    private void definirCusto(){
+    public void definirCusto(){
         
         if(this.isFim() || this.isInicio()){
             this.setCusto(0);
@@ -84,7 +84,7 @@ public class Celula {
         }
     }
     
-    private void definirPowerUp(){
+    public void definirPowerUp(){
         
         if(this.isFim() || this.isInicio()){
             this.setPowerUp(0);

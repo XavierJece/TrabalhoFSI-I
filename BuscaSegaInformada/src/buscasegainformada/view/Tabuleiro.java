@@ -125,17 +125,22 @@ public class Tabuleiro extends JFrame{
             }
         };
         
-        ActionListener atualizarObjetivo = new ActionListener() {
+        ActionListener atualizarTabuleiro = new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                definirCelulaObjetivo(10);
+                System.err.println("Clicado");
+                
+                atualizaCelulas(10);
+                atualiazarTabuleiro();
+                
+//                definirCelulaObjetivo(10);
             }
         };
         
 //        add evento nos btns
         this.btnBuscarEstrela.addActionListener(buscaEstrela);
-        this.btnAtualizarPosicaoFinal.addActionListener(atualizarObjetivo);
+        this.btnAtualizarTabuleiro.addActionListener(atualizarTabuleiro);
     }
     
     
@@ -190,6 +195,30 @@ public class Tabuleiro extends JFrame{
         
         /*Para conseguir ver*/
         this.setVisible(true);
+    }
+    
+    private void atualizaCelulas(int ordem){
+        definindoCordenadasObjetivo(ordem);
+        definirCelulaObjetivo(ordem);
+        
+        for (int i = 0; i < Math.pow(ordem, 2); i++) {
+            celulas.get(i).definirCusto();
+            celulas.get(i).definirPowerUp();
+        }
+        
+    }
+    
+    private void atualiazarTabuleiro(){
+        for (int i = 0; i < tabuleiro.size(); i++) {
+//          Deixando o fundo visinho
+            tabuleiro.get(i).setBackground(null);
+//            tabuleiro.get(i).setBackground(definirCorCelula(celulas.get(i).getCusto()));
+
+//          Definindo Icon
+           tabuleiro.get(i).setIcon(null);
+//            tabuleiro.get(i).setIcon(definirIcon(celulas.get(i).getPowerUp(), celulas.get(i).isInicio(), 70));
+            
+        }
     }
     
     private void renderTabuleiro(int ordemTabuleiro, int dimencao) {
