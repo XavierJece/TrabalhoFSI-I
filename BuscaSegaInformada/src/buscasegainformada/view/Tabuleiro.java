@@ -49,12 +49,14 @@ public class Tabuleiro extends JFrame{
     private JLabel lblTipoBusca;
     
     private JPanel jpDados;
+    private JPanel jpDadosCelulas;
     private JPanel jpLegenda;
     private JPanel jpTabuleiro;
     
     private JTextField txtPosicaoFinal;
   
     private JButton btnBuscarEstrela;
+    private JButton btnBuscarGulosa;
     private JButton btnAtualizarTabuleiro;
     private JButton btnAtualizarPosicaoFinal;
     
@@ -79,6 +81,7 @@ public class Tabuleiro extends JFrame{
         this.btnAtualizarTabuleiro = new JButton("Atualizar Tabuleiro");
         this.btnAtualizarPosicaoFinal = new JButton("Atualizar Posição Final");
         this.btnBuscarEstrela = new JButton("Bucar Rota Por A*");
+        this.btnBuscarGulosa = new JButton("Bucar Rota Por Gulosa");
         
         /*Definindo Layout que podemos alterar*/
         this.jpDados.setLayout(null);
@@ -99,7 +102,8 @@ public class Tabuleiro extends JFrame{
         this.txtPosicaoFinal.setBounds(larguraComponentes - 10, 10, larguraComponentes, aturaComponentes);
         this.btnAtualizarPosicaoFinal.setBounds(15, aturaComponentes + 20, larguraComponentes - 10, aturaComponentes);
         this.btnAtualizarTabuleiro.setBounds(larguraComponentes + 20, aturaComponentes + 20, larguraComponentes - 30, aturaComponentes);
-        this.btnBuscarEstrela.setBounds(15, aturaComponentes*2 + 30 + 20, larguraComponentes - 10, aturaComponentes);
+        this.btnBuscarEstrela.setBounds(7, aturaComponentes*2 + 30 + 20, larguraComponentes - 10, aturaComponentes);
+        this.btnBuscarGulosa.setBounds(7 + larguraComponentes, aturaComponentes*2 + 30 + 20, larguraComponentes - 10, aturaComponentes);
         
 //        Add componentes
         this.jpDados.add(this.lblPosicaoFinal);
@@ -107,6 +111,7 @@ public class Tabuleiro extends JFrame{
         this.jpDados.add(this.btnAtualizarPosicaoFinal);
         this.jpDados.add(this.btnAtualizarTabuleiro);
         this.jpDados.add(this.btnBuscarEstrela);
+        this.jpDados.add(this.btnBuscarGulosa);
         
 //        Definindo eventos dos btns
         definirEventosBtns();
@@ -115,13 +120,69 @@ public class Tabuleiro extends JFrame{
         this.add(this.jpDados);
     }
     
+    private void definirLayoutDadosCelulas(int ordem, int dimencao){
+//        Instanciar Companentes
+        this.jpDadosCelulas = new JPanel();
+        
+        /*Definindo Layout que podemos alterar*/
+        this.jpDadosCelulas.setLayout(null);
+        
+//        dimenção do panel
+        int posicaoX = (ordem * dimencao + 15);
+        int posicaoY = this.jpDados.getHeight() + 30;
+        int aturaComponentes = 30;
+        int larguraPanelDadosCelulas = 350;
+        int aturaPanelDadosCelulas = (aturaComponentes*4 + 20 + 10 + 30 + 10);
+        this.jpDadosCelulas.setBounds(posicaoX, posicaoY, larguraPanelDadosCelulas, aturaPanelDadosCelulas);
+        this.jpDadosCelulas.setBorder(BorderFactory.createLineBorder(Color.GREEN, 2));
+        
+//        Definindo dimentos componentes
+        int larguraComponentes = (larguraPanelDadosCelulas/2 - 2);
+        
+//        Add componentes
+        
+        
+//        Definindo eventos dos btns
+
+//        Add na tela
+        this.add(this.jpDadosCelulas);
+    }
+    
+    private void definirLayoutLegenta(int ordem, int dimencao){
+//        Instanciar Companentes
+        this.jpLegenda = new JPanel();
+        
+        /*Definindo Layout que podemos alterar*/
+        this.jpLegenda.setLayout(null);
+        
+//        dimenção do panel
+        int posicaoX = (ordem * dimencao + 15);
+        int posicaoY = (this.jpDados.getHeight()*2 + 15*3);
+        int aturaComponentes = 30;
+        int larguraPanelLegenda = 350;
+        int aturaPanelLeganda = (aturaComponentes*4 + 20 + 10 + 30 + 10);
+        this.jpLegenda.setBounds(posicaoX, posicaoY, larguraPanelLegenda, aturaPanelLeganda);
+        this.jpLegenda.setBorder(BorderFactory.createLineBorder(Color.CYAN, 2));
+        
+//        Definindo dimentos componentes
+        int larguraComponentes = (larguraPanelLegenda/2 - 2);
+        
+//        Add componentes
+        
+        
+//        Definindo eventos dos btns
+
+//        Add na tela
+        this.add(this.jpLegenda);
+    }
+    
     private void definirEventosBtns(){
 //        Criando Evendo
         ActionListener buscaEstrela = new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                renderCaminho(buscar());
+                renderCaminho(buscar("ESTRELA"));
             }
         };
         
@@ -129,12 +190,23 @@ public class Tabuleiro extends JFrame{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.err.println("Clicado");
-                
+                caminhoApresentado = false;
                 atualizaCelulas(10);
-                atualiazarTabuleiro();
                 
-//                definirCelulaObjetivo(10);
+            }
+        };
+        
+        ActionListener buscaGulosa = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(buscar("GULOSA") == null){
+                    JOptionPane.showMessageDialog(null, "Caminho não encotrado :(", "Falha!", ERROR);
+                }else{
+                    renderCaminho(buscar("GULOSA"));
+                }
+                
+                
             }
         };
         
@@ -144,17 +216,25 @@ public class Tabuleiro extends JFrame{
     }
     
     
-    private ArrayList<Celula> buscar(){
-        Buscas b = new Buscas();
+    private ArrayList<Celula> buscar(String tipo){
+        if(this.caminhoApresentado){
+            return null;
+        }
         
-        return b.getCaminhoFinalBuscaEstrela(celulas, (int) Math.sqrt(celulas.size()));
+        Buscas b = new Buscas();
+        if(tipo.equals("ESTRELA")){
+            return b.getCaminhoFinalBuscaEstrela(celulas, (int) Math.sqrt(celulas.size()));
+        }if(tipo.equals("GULOSA")){
+            return b.getCaminhoFinalBuscaGulosa(celulas, (int) Math.sqrt(celulas.size()));
+        }
+        
+        return null;
     }
     
     private void renderCaminho(ArrayList<Celula> caminho){
         
-        if(this.caminhoApresentado){
-            return;
-        }
+//       Função de devo chamar para não bugar a apresentação do caminho
+        this.repaint();
         
         this.caminhoApresentado = true;
         
@@ -178,6 +258,9 @@ public class Tabuleiro extends JFrame{
     private void definirLayoutTela(){
         /*instacionado os componentes e add na tela*/
         definirLayoutDados(10, 70);
+        definirLayoutDadosCelulas(10, 70);
+        definirLayoutLegenta(10,70);
+        
         renderTabuleiro(10, 70);
         this.caminhoApresentado = false;
         
@@ -198,27 +281,23 @@ public class Tabuleiro extends JFrame{
     }
     
     private void atualizaCelulas(int ordem){
-        definindoCordenadasObjetivo(ordem);
         definirCelulaObjetivo(ordem);
+        
+//       Função de devo chamar para não bugar o novo mapa
+        this.repaint();
         
         for (int i = 0; i < Math.pow(ordem, 2); i++) {
             celulas.get(i).definirCusto();
             celulas.get(i).definirPowerUp();
+            this.tabuleiro.get(i).setBackground(this.definirCorCelula(celulas.get(i).getCusto()));
+            this.tabuleiro.get(i).setIcon(this.definirIcon(celulas.get(i).getPowerUp(), celulas.get(i).isInicio(), 70));
         }
         
-    }
-    
-    private void atualiazarTabuleiro(){
-        for (int i = 0; i < tabuleiro.size(); i++) {
-//          Deixando o fundo visinho
-            tabuleiro.get(i).setBackground(null);
-//            tabuleiro.get(i).setBackground(definirCorCelula(celulas.get(i).getCusto()));
-
-//          Definindo Icon
-           tabuleiro.get(i).setIcon(null);
-//            tabuleiro.get(i).setIcon(definirIcon(celulas.get(i).getPowerUp(), celulas.get(i).isInicio(), 70));
-            
-        }
+        
+//        this.tabuleiro.get(1).setBackground(this.definirCorCelula(celulas.get(1).getCusto()));
+        
+        
+        
     }
     
     private void renderTabuleiro(int ordemTabuleiro, int dimencao) {
@@ -294,6 +373,7 @@ public class Tabuleiro extends JFrame{
     }
     
     private void definindoCordenadasObjetivo(int ordemTabuleiro){
+        txtPosicaoFinal.setText(txtPosicaoFinal.getText().toLowerCase());
         String cordenadas[] = txtPosicaoFinal.getText().split("x");
             try {
             this.posicaoXObjetivo = Integer.parseInt(cordenadas[0]) - 1;

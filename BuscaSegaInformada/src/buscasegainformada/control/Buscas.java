@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class Buscas {
     //Atributos
-    ArrayList<Celula> caminho;
+//    ArrayList<Celula> caminho;
     ArrayList<Celula> caminhoFinal;
     ArrayList<Celula> celulasExpandidas;
     ArrayList<Celula> celulasVisidadas;
@@ -21,7 +21,7 @@ public class Buscas {
     
     //Contrutor
     public Buscas(){    
-        caminho = new ArrayList<>();
+//        caminho = new ArrayList<>();
         caminhoFinal = new ArrayList<>();
         celulasExpandidas = new ArrayList<>();
         celulasVisidadas = new ArrayList<>();
@@ -29,91 +29,60 @@ public class Buscas {
     }
 
     //Minhas funções
-    private ArrayList<Celula> buscaEstrela(ArrayList<Celula> lista, int ordemTabuleiro, int posicao) {
-        //        if(caminho.contains(lista.get(posicao))){
-//            return null;
-//        }
+    
+    /**
+     * Função que realmente faz a busca GULOSA
+     * @param lista Lista onde estão as celulas para fazer a busca (O grafo)
+     * @param ordemTabuleiro A dimenção do tabuleiro
+     * @param posicao Posição onde a celula atual se encontra na lista (Grafo)
+     */
+    private void gulosa(ArrayList<Celula> lista, int ordemTabuleiro, int posicao){
         
+//        No atual
         Celula atual = lista.get(posicao);
-//        System.out.println("Posição Atual: " + atual.getPosicaoArray());;
-        int custoCima, custoBaixo, custoEsquerda, custoDireita;
-        //        Verificando se chegamos no fim
-        if(atual.isFim()){
-//            System.err.println("*************ENCONTROU****************");
-            return null;
-        }else{
-//            Criando visinho
-            Celula cima, baixo, esquerda, direita;
-
-//            add a posição atual
-            this.caminho.add(atual);
-            
-//            Verificando se existe Visinho cima
-            cima = ((((posicao - ordemTabuleiro) < 0)) ? null : lista.get((posicao-ordemTabuleiro)));
-            
-//            Verificando se existe Visinho baixo
-            baixo = ((((posicao + ordemTabuleiro) >= Math.pow(ordemTabuleiro, 2))) ? null : lista.get((posicao+ordemTabuleiro)));
-
-//            Verificando se existe Visinho esquerda
-            esquerda = ((((posicao % 10) == 0)) ? null : lista.get((posicao-1)));
-            
-            
-//            Verificando se existe Visinho direita
-            direita = (((((posicao + 1) % 10) == 0)) ? null : lista.get((posicao+1)));
-            
-            if(cima == null){
-                custoCima = 1000;
-            }else{
-                custoCima = cima.custoEstrela();
-            }
-            
-            if(baixo == null){
-                custoBaixo = 1000;
-            }else{
-                custoBaixo = baixo.custoEstrela();
-            }
-            
-            if(esquerda == null){
-                custoEsquerda = 1000;
-            }else{
-                custoEsquerda = esquerda.custoEstrela();
-            }
-            
-            if(direita == null){
-                custoDireita = 1000;
-            }else{
-                custoDireita = direita.custoEstrela();
-            }
-            
-//            System.out.println("Posição Atual: " + atual.getPosicaoArray() +
-//                    " Cima: " + custoCima +
-//                    " Baixo: " + custoBaixo +
-//                    " Esquerda: " + custoEsquerda + 
-//                    " Direita: " + custoDireita);
-            
-            if((custoCima < custoBaixo) && (custoCima < custoEsquerda) && (custoCima < custoDireita)){
-                
-//                System.out.println("Indo para cima => Posicao: " + cima.getPosicaoArray());
-                buscaEstrela(lista, ordemTabuleiro, cima.getPosicaoArray());
-                
-            }else if((custoBaixo < custoCima) && (custoBaixo < custoEsquerda) && (custoBaixo < custoDireita)){
-                
-//                System.out.println("Indo para baixoo => Posicao: " + baixo.getPosicaoArray());
-                buscaEstrela(lista, ordemTabuleiro, baixo.getPosicaoArray());
-                
-            }else if((custoEsquerda < custoCima) && (custoEsquerda < custoBaixo) && (custoEsquerda < custoDireita)){
-                
-//                System.out.println("Indo para esquerda => Posicao: " + esquerda.getPosicaoArray());
-                buscaEstrela(lista, ordemTabuleiro, esquerda.getPosicaoArray());
-                
-            }else{
-//                System.out.println("Indo para direita => Posicao: " + direita.getPosicaoArray());
-                buscaEstrela(lista, ordemTabuleiro, direita.getPosicaoArray());
-            }
-//            *******************************************************
-            
+        
+        
+//       Verificando se chegou ao fim
+        if (atual.isFim()) {
+            return;
         }
-        return this.caminho;
+        
+//        espandindo os visinhos
+        this.expandirVizinhos(lista, ordemTabuleiro, posicao);
+        
+//        Definindo filho
+        Celula proximo  = this.menorHeuristica();
+        
+//        Verificando se não caio em um loop
+        if(atual.getPai() == proximo){
+            return;
+        }
+        
+//        Defini que o pai da proxima é o atual
+        proximo.setPai(atual);
+        
+//        Limpa todas as listas
+        this.clearLists();
+        
+//        Faz a recursividade
+        this.gulosa(lista, ordemTabuleiro, posicao);
+    }
+    
+    /**
+     * Função para definir qual será o proximo no dá lista por base na menor
+     * Heuristica
+     * @return Celula com a menor Heristica
+     */
+    private Celula menorHeuristica(){
+        Celula proxima  = this.listaDeExpancao.get(0);
+        
+        for (int i = 1; i < this.listaDeExpancao.size(); i++) {
+            if(this.listaDeExpancao.get(i).getHeuristica() < proxima.getHeuristica()){
+                proxima = this.listaDeExpancao.get(i);
+            }
+        }
+        
+        return proxima;
     }
     
     /**
@@ -128,7 +97,7 @@ public class Buscas {
         Celula atual = lista.get(posicao);
         
 //        Add posição no caminho
-        caminho.add(atual);
+//        caminho.add(atual);
         
 //       Verificando se chegou ao fim
         if (atual.isFim()) {
@@ -289,9 +258,9 @@ public class Buscas {
         listaDeExpancao.clear();
         
 //        Removendo celula caso seja invalida
-        if(!espandidoAgora){
-            caminho.remove(atual);
-        }
+//        if(!espandidoAgora){
+////            caminho.remove(atual)S;
+//        }
     }
     
     /**
@@ -301,6 +270,8 @@ public class Buscas {
      * @return retorma a caminho encontrando
      */
     public ArrayList<Celula> getCaminhoFinalBuscaEstrela(ArrayList<Celula> lista, int ordemTabuleiro) {
+        
+        this.clearLists();  
         
 //        Celula que será o objetivo
         Celula celula = null;
@@ -321,5 +292,48 @@ public class Buscas {
         return caminhoFinal;
     }
     
+        /**
+     * Função que busca a caminho encontrando pela busca Gulosa  
+     * @param lista Lista onde estão as celulas para fazer a busca (O grafo)
+     * @param ordemTabuleiro A dimenção do tabuleiro
+     * @return retorma a caminho encontrando
+     */
+    public ArrayList<Celula> getCaminhoFinalBuscaGulosa(ArrayList<Celula> lista, int ordemTabuleiro) {
+        
+        this.clearLists();  
+        
+//        Celula que será o objetivo
+        Celula celula = null;
+        
+//        Encontrando o Objetivo
+        for (int i = 0; i < lista.size(); i++) {
+            if(lista.get(i).isFim()){
+                celula = lista.get(i);
+            }
+        }
+        
+//        Função que realmente faz a busca
+        this.gulosa(lista, ordemTabuleiro, 0);
+        
+//        Chamando Recursividade;
+        this.caminhoFinal(celula);
+        
+//        Verifica se não caiu em nenhum loop
+        if (this.caminhoFinal.get(this.caminhoFinal.size()-1).isInicio()) {
+            return caminhoFinal;
+        }else{
+            return null;
+        }
+        
+        
+    }
+    
+    
+    private void clearLists(){
+        this.caminhoFinal.clear();
+        this.celulasExpandidas.clear();
+        this.celulasVisidadas.clear();
+        this.listaDeExpancao.clear();
+    }
     
 }
